@@ -5,6 +5,7 @@ const APP_IP = 5350105;
 
 import { rejects } from "assert";
 import loginPage from "./loginPage";
+import { resolve } from "path";
 
 export default {
   getRandomElement(array) {
@@ -45,6 +46,7 @@ export default {
   async init() {
     this.photoCache = {};
     this.friends = await this.getFriends();
+    [this.me] = await this.getUsers();
   },
 
   login() {
@@ -65,9 +67,9 @@ export default {
     });
   },
 
-  // logout() {
-  
-  // },
+  logout() {
+    return new Promise((resolve) => VK.Auth.revokeGrants(resolve));
+  },
 
   callApi(method, params) {
     params.v = params.v || '5.120';
@@ -97,6 +99,18 @@ export default {
     };
 
     return this.callApi('photos.getAll', params);
+  },
+
+  getUsers(ids) {
+    const params = {
+      fields: ['photo_50', 'photo_100'], 
+    };
+
+    if (ids) {
+      params.user_ids = ids;
+    }
+
+    return this.callApi('users.get', params);
   },
 
   async getFriendsPhotos(id) {

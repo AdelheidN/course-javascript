@@ -1,5 +1,7 @@
 import pages from './pages'; 
 import model from './model';
+import profilePage from './profilePage';
+import { doc } from 'prettier';
 
 export default {
     async getNextPhoto() {
@@ -11,10 +13,14 @@ export default {
         const photoComp = document.querySelector('.component-photo');
         const headerPhotoComp = document.querySelector('.component-header-photo');
         const headerNameComp = document.querySelector('.component-header-name');
+        const footerPhotoComp = document.querySelector('.component-footer-photo'); 
+
+        this.friend = friend;
 
         headerPhotoComp.style.backgroungImage = `url('${friend.photo_50}')`;
         headerNameComp.innerText = `${friend.first_name ?? ''} ${friend.last_name ?? ''}`;
         photoComp.style.backgroungImage = `url(${url})`;
+        footerPhotoComp.style.backgroungImage = `url('${model.me.photo_50}')`;
     },
 
     handleEvnts() {
@@ -32,6 +38,16 @@ export default {
             }
             
             
+        });
+
+        document.querySelector('.component-header-profile-link').addEventListener('click', async() =>{
+            await profilePage.setUser(this.friend);
+            pages.openPage('profile');
+        });
+
+        document.querySelector('component-footer-container-profile-link').addEventListener('click', async() => {
+            await profilePage.setUser(model.me);
+            pages.openPage('profile');
         });
     },
 
